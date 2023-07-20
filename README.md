@@ -3,15 +3,22 @@
 Command line tool to convert files into various formats.
 
 Current conversions:
-    - json-yaml (json to yaml)
++ json-yaml (json to yaml)
+
+Todo:
++ add more complex test files
++ json-yaml
++ yaml-xml, xml-yaml, json-xml, xml-json
++ accept folders containing files
++ image conversion
++ would be interesting to convert via transitivity depending on whats available,
+  meaning json-xml -> json-yaml, yaml-xml
 
 ## Installation
 
 No package available yet.
 
 ## Usage
-
-FIXME: explanation
 
     $ java -jar file-converter-0.1.0-standalone.jar json-yaml <your-json-file> <output-yaml-file>
 
@@ -21,10 +28,6 @@ FIXME: explanation
 
     to print to the terminal
 
-
-### Bugs
-
-- array elements should be less intended
 
 ## License
 

@@ -19,11 +19,13 @@
 
 (defn intent-yaml
   [content level & {:as options}]
-  (let [{:keys [include-first-line? offset-kids] :or {include-first-line? false offset-kids 0}} options
+  (let [{:keys [include-first-line? offset-kids fill-with] :or {include-first-line? false 
+                                                                offset-kids 0
+                                                                fill-with "  "}} options
         lines (s/split-lines content)]
     (str (when include-first-line?
-           (apply str (repeat level "  ")))
-         (s/join (str \newline (apply str (repeat (+ level offset-kids) "  "))) lines))))
+           (apply str (repeat level fill-with)))
+         (s/join (str \newline (apply str (repeat (+ level offset-kids) fill-with))) lines))))
 
 (defprotocol To-Yaml
   (to-yaml [content] ))
@@ -50,7 +52,7 @@
     (let [lvl (if (bound? #'*level*) *level* 0)
           skip-nl (if (bound? #'*skip-newline*) *skip-newline* nil)]
       (binding [*level* (if skip-nl
-                          lvl
+                          (dec lvl)
                           (inc lvl))]
         (str (when (and (> lvl 0) (not skip-nl))
                \newline)
