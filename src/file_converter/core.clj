@@ -30,7 +30,6 @@
 (defprotocol To-Yaml
   (to-yaml [content] ))
 
-(declare ^:dynamic *level*)
 (declare ^:dynamic *skip-newline*)
 
 (extend-protocol To-Yaml
@@ -49,27 +48,24 @@
   
   clojure.lang.PersistentArrayMap
   (to-yaml [content]
-    (let [lvl (if (bound? #'*level*) *level* 0)
-          skip-nl (if (bound? #'*skip-newline*) *skip-newline* nil)]
-      (binding [*level* (if skip-nl
-                          (dec lvl)
-                          (inc lvl))]
-        (str (when (and (> lvl 0) (not skip-nl))
-               \newline)
-             (s/join \newline (for [[k v] content]
-                                (intent-yaml (str k ":" (to-yaml v)) lvl)))))))
+    (let [skip-nl (if (bound? #'*skip-newline*) *skip-newline* nil)]
+      (str (when (not skip-nl)
+             \newline)
+           (s/join \newline (for [[k v] content]
+                              (intent-yaml (str k ":" (to-yaml v)) 1))))))
   
   clojure.lang.PersistentVector
   (to-yaml [content]
-           (let [lvl (if (bound? #'*level*) *level* 0)]
-             (binding [*level* lvl]
-               (str \newline
-                    (s/join \newline (for [item content]
-                                       (intent-yaml (str "- " (binding [*skip-newline* true]
-                                                                (to-yaml item))) 
-                                                    lvl :include-first-line? true :offset-kids 1))))))))
+           (str \newline
+                (s/join \newline (for [item content]
+                                   (intent-yaml (str "- " (binding [*skip-newline* true]
+                                                            (to-yaml item)))
+                                                0 :include-first-line? true :offset-kids 1))))))
 
 (defmethod convert "json-yaml"
   [_ content]
-  (let [content (json/read-str content)]
-    (to-yaml content)))
+  (let [content (json/read-str content)
+        yaml (to-yaml content)]
+    (if (s/starts-with? yaml (str \newline))
+      (s/replace-first yaml \newline "")
+      yaml)))

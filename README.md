@@ -9,6 +9,7 @@ Todo:
 + add more complex test files
 + json-yaml
 + yaml-xml, xml-yaml, json-xml, xml-json
++ csv-orc, orc-csv
 + accept folders containing files
 + image conversion
 + would be interesting to convert via transitivity depending on whats available,

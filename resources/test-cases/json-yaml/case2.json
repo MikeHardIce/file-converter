@@ -1,0 +1,14 @@
+{
+    "level0": {
+        "level1": {
+            "level2": {
+                "level3":{
+                    "level4": [
+                        {"level5_1": "line1\nline2"},
+                        {"level5_2": "line1\nline2"}
+                    ]
+                }
+            }
+        }
+    }
+}
