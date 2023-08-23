@@ -1,0 +1,11 @@
+orders:
+  - order: 123
+    date: 2023-07-15
+    products:
+      - name: Aunty Ethel's Ethernal Bound
+        quantity: 1
+      - name: Lucified Candy
+        quantity: 666
+    comment: |
+      Leave at neighbour
+      And don't be afraid :D

@@ -8,11 +8,12 @@ Current conversions:
 Todo:
 + add more complex test files
 + json-yaml
++ edn-yaml, yaml-edn
 + yaml-xml, xml-yaml, json-xml, xml-json
 + csv-orc, orc-csv
 + accept folders containing files
 + image conversion
-+ would be interesting to convert via transitivity depending on whats available,
++ would be interesting to convert transitively depending on what is available,
   meaning json-xml -> json-yaml, yaml-xml
 
 ## Installation

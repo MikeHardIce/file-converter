@@ -1,6 +1,7 @@
 (ns file-converter.core
-  (:require [clojure.data.json :as json]
-            [clojure.string :as s])
+  (:require [clojure.data.json :refer [read-str]]
+            [clojure.string :as s]
+            [clojure.edn :as e])
   (:gen-class))
 
 (defmulti convert (fn [from->to content] from->to))
@@ -52,7 +53,10 @@
       (str (when (not skip-nl)
              \newline)
            (s/join \newline (for [[k v] content]
-                              (intent-yaml (str k ":" (to-yaml v)) 1))))))
+                              (let [k (if (keyword? k)
+                                        (name k)
+                                        k)]
+                                (intent-yaml (str k ":" (to-yaml v)) 1)))))))
   
   clojure.lang.PersistentVector
   (to-yaml [content]
@@ -64,7 +68,15 @@
 
 (defmethod convert "json-yaml"
   [_ content]
-  (let [content (json/read-str content)
+  (let [content (read-str content)
+        yaml (to-yaml content)]
+    (if (s/starts-with? yaml (str \newline))
+      (s/replace-first yaml \newline "")
+      yaml)))
+
+(defmethod  convert "edn-yaml"
+  [_ content]
+  (let [content (e/read-string content)
         yaml (to-yaml content)]
     (if (s/starts-with? yaml (str \newline))
       (s/replace-first yaml \newline "")
