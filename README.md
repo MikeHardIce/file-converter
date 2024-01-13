@@ -4,6 +4,7 @@ Command line tool to convert files into various formats.
 
 Current conversions:
 + json-yaml (json to yaml)
++ edn-yaml (edn to yaml)
 
 Todo:
 + add more complex test files

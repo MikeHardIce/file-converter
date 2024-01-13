@@ -66,6 +66,28 @@
                                                             (to-yaml item)))
                                                 0 :include-first-line? true :offset-kids 1))))))
 
+
+(defn from-yaml 
+  ([content]
+   (from-yaml (filter #(-> % s/trim seq) (s/split-lines content)) {} []))
+  ([lines result parent-keys]
+   (let [current-line (first lines)]
+     (cond
+       (not (seq current-line)) result
+       (re-matches #"[ ]*[A-Za-z]+\:[ ]?\|+" current-line) (let [key (s/trim (first (s/split current-line #":" 2)))
+                                                                 body (loop [lines (rest lines)
+                                                                             result []]
+                                                                        (if (or (not (seq (first lines)))
+                                                                                (re-matches #"[ ]*[A-Za-z]+\:.+" (first lines)))
+                                                                          result
+                                                                          (recur (rest lines) (conj result (s/trim (first lines))))))]
+                                                             (assoc-in result (conj parent-keys key) (s/join \newline body)))
+       (re-matches #"[ ]*[A-Za-z]+\:[ ]?[0-9A-Za-z \p{P}\p{S}]+" current-line) (let [[key value] (mapv s/trim (s/split current-line #":" 2))]
+                                                                                 (assoc-in result (conj parent-keys key) (e/read-string value)))
+       (re-matches #"[ ]*[A-Za-z]+\:[ ]?" current-line) (let [key (s/trim (first (s/split current-line #":" 2)))]
+                                                          (assoc-in result (conj parent-keys key) (from-yaml (rest lines) {} [])))
+       :else (recur (rest lines) result parent-keys)))))
+
 (defmethod convert "json-yaml"
   [_ content]
   (let [content (read-str content)
